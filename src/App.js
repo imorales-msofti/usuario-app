@@ -23,10 +23,17 @@ const columns = [
 
 export default class App extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
+      usuario: {
+        nombre: "",
+        correo: "",
+        estado: "",
+        edad: "",
+        telefono: ""
+      },
       usuarios: [
         {
           title: 'Title 01',
@@ -46,41 +53,51 @@ export default class App extends Component {
       ]
     }
   }
-  
-  render(){
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <div className="container">
-          <div class="row">
+  handleChange = (event) => {
+    console.log(`${event.target.name}: ${event.target.value}`);
 
-            <div className="col-md-4">
-              <div className="form-group">
-                <input type="text" className="form-control" placeholder="Nombre" />
-                <br/>
-                <input type="text" className="form-control" placeholder="Correo" />
-                <br/>
-                <input type="text" className="form-control" placeholder="Estado" />
-                <br/>
-                <input type="text" className="form-control" placeholder="Edad" />
-                <br/>
-                <input type="text" className="form-control" placeholder="Teléfono" />
-                <br/>
-                <button className="btn btn-primary">Enviar</button>
+    this.setState({ usuario: { ...this.state.usuario, [event.target.name]: event.target.value } })
+  }
+
+  handleEnviar = () => {
+    console.log(this.state.usuario);
+  }
+
+  render() {
+
+    return (
+      <div className="App">
+        <header className="App-header">
+          <div className="container">
+            <div className="row">
+
+              <div className="col-md-4">
+                <div className="form-group">
+                  <input type="text" name="nombre" className="form-control" placeholder="Nombre" onChange={this.handleChange} />
+                  <br />
+                  <input type="email" name="correo" className="form-control" placeholder="Correo" onChange={this.handleChange} />
+                  <br />
+                  <input type="text" name="estado" className="form-control" placeholder="Estado" onChange={this.handleChange} />
+                  <br />
+                  <input type="number" name="edad" className="form-control" placeholder="Edad" onChange={this.handleChange} />
+                  <br />
+                  <input type="tel" name="telefono" className="form-control" placeholder="Teléfono" onChange={this.handleChange} />
+                  <br />
+                  <button className="btn btn-primary" type="button" onClick={this.handleEnviar}>Enviar</button>
+                </div>
+              </div>
+              <div className="col-lg-8">
+                <DataTable title="Usuarios" columns={columns} data={this.state.usuarios} />
               </div>
             </div>
-            <div className="col-lg-8">
-              <DataTable title="Usuarios" columns={columns} data={this.state.usuarios}/>
-            </div>
           </div>
-        </div>
-      </header>
-    </div>
-  );
+        </header>
+      </div>
+    );
 
 
 
-}
+  }
 }
 
