@@ -2,21 +2,32 @@ import React, { Component } from 'react'
 import logo from './logo.svg';
 import './App.css';
 import DataTable from 'react-data-table-component';
+import { CSVLink, CSVDownload } from "react-csv";
 
 const columns = [
   {
-    name: 'Title',
-    selector: 'title',
+    nombre: 'Nombre',
+    selector: 'nombre',
     sortable: true,
   },
   {
-    name: 'Director',
-    selector: 'director',
+    name: 'Correo',
+    selector: 'correo',
     sortable: true,
   },
   {
-    name: 'Year',
-    selector: 'year',
+    name: 'Estado',
+    selector: 'estado',
+    sortable: true,
+  },
+  {
+    name: 'Edad',
+    selector: 'edad',
+    sortable: true,
+  },
+  {
+    name: 'Telefono',
+    selector: 'telefono',
     sortable: true,
   },
 ];
@@ -34,23 +45,7 @@ export default class App extends Component {
         edad: "",
         telefono: ""
       },
-      usuarios: [
-        {
-          title: 'Title 01',
-          director: 'title',
-          year: 'true',
-        },
-        {
-          title: 'Title 02',
-          director: 'title',
-          year: 'true',
-        },
-        {
-          title: 'Title 03',
-          director: 'title',
-          year: 'true',
-        }
-      ]
+      usuarios: []
     }
   }
 
@@ -60,8 +55,42 @@ export default class App extends Component {
     this.setState({ usuario: { ...this.state.usuario, [event.target.name]: event.target.value } })
   }
 
-  handleEnviar = () => {
-    console.log(this.state.usuario);
+  getUsuarios() {
+    const url = `http://usuarios-admin-dev.eba-xmphr2hv.us-east-2.elasticbeanstalk.com/usuarios/`;
+
+    fetch(url)
+      .then(request => request.json())
+      .then(data => {
+        console.log(data);
+        this.setState({ usuarios: data })
+      });
+  }
+
+  postUsuario = () => {
+    const url = `http://usuarios-admin-dev.eba-xmphr2hv.us-east-2.elasticbeanstalk.com/usuarios/`;
+
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(this.state.usuario),
+      headers: {
+        'Content-Type': "application/json"
+      }
+    })
+      .then(request => request.json())
+      .then(data => {
+
+        this.setState(
+          {
+            usuario:{
+              nombre: "",
+              correo: "",
+              estado: "",
+              edad: "",
+              telefono: ""
+            },
+             usuarios: [...this.state.usuarios, data],
+            })
+      });
   }
 
   render() {
@@ -72,23 +101,26 @@ export default class App extends Component {
           <div className="container">
             <div className="row">
 
-              <div className="col-md-4">
+              <div className="col-md-4 text-center">
+                <h3>Nuevo usuario</h3>
+                <br/>
                 <div className="form-group">
-                  <input type="text" name="nombre" className="form-control" placeholder="Nombre" onChange={this.handleChange} />
+                  <input type="text" name="nombre"  value={this.state.usuario.nombre} className="form-control form-control-lg" placeholder="Nombre" onChange={this.handleChange} />
                   <br />
-                  <input type="email" name="correo" className="form-control" placeholder="Correo" onChange={this.handleChange} />
+                  <input type="email" name="correo" value={this.state.usuario.correo}  className="form-control form-control-lg" placeholder="Correo" onChange={this.handleChange} />
                   <br />
-                  <input type="text" name="estado" className="form-control" placeholder="Estado" onChange={this.handleChange} />
+                  <input type="text" name="estado"  value={this.state.usuario.estado} className="form-control form-control-lg" placeholder="Estado" onChange={this.handleChange} />
                   <br />
-                  <input type="number" name="edad" className="form-control" placeholder="Edad" onChange={this.handleChange} />
+                  <input type="number" name="edad"  value={this.state.usuario.edad} className="form-control form-control-lg" placeholder="Edad" onChange={this.handleChange} />
                   <br />
-                  <input type="tel" name="telefono" className="form-control" placeholder="Teléfono" onChange={this.handleChange} />
+                  <input type="tel" name="telefono" value={this.state.usuario.telefono}  className="form-control form-control-lg" placeholder="Teléfono" onChange={this.handleChange} />
                   <br />
-                  <button className="btn btn-primary" type="button" onClick={this.handleEnviar}>Enviar</button>
+                  <button className="btn btn-primary" type="button" onClick={this.postUsuario}>Enviar</button>
                 </div>
               </div>
               <div className="col-lg-8">
-                <DataTable title="Usuarios" columns={columns} data={this.state.usuarios} />
+                <CSVLink data={this.state.usuarios} className="btn btn-primary">Descargar excel</CSVLink>
+                <DataTable title="Usuarios registrados" columns={columns} data={this.state.usuarios} />
               </div>
             </div>
           </div>
@@ -98,6 +130,10 @@ export default class App extends Component {
 
 
 
+  }
+
+  componentDidMount() {
+    this.getUsuarios()
   }
 }
 
