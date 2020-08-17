@@ -56,7 +56,8 @@ export default class App extends Component {
   }
 
   getUsuarios() {
-    const url = `https://usuarios-admin-dev.eba-xmphr2hv.us-east-2.elasticbeanstalk.com/usuarios/`;
+    // const url = `https://usuarios-admin-dev.eba-xmphr2hv.us-east-2.elasticbeanstalk.com/usuarios/`;
+    const url = `https://api-usuarios.ivan-morales.xyz/usuarios/`;
 
     fetch(url)
       .then(request => request.json())
@@ -67,7 +68,7 @@ export default class App extends Component {
   }
 
   postUsuario = () => {
-    const url = `https://usuarios-admin-dev.eba-xmphr2hv.us-east-2.elasticbeanstalk.com/usuarios/`;
+    const url = `https://api-usuarios.ivan-morales.xyz/usuarios/`;
 
     fetch(url, {
       method: 'POST',
